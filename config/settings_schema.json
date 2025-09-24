@@ -1,0 +1,322 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "LifeStyle",
+    "theme_version": "1.0.0",
+    "theme_author": "LifeStyle Team",
+    "theme_documentation_url": "",
+    "theme_support_url": ""
+  },
+  {
+    "name": "Genel Ayarlar",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo Görseli"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo Genişliği",
+        "min": 50,
+        "max": 300,
+        "step": 10,
+        "default": 150,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "32x32px PNG önerilir"
+      },
+      {
+        "type": "header",
+        "content": "Sosyal Medya"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "Twitter URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube URL"
+      }
+    ]
+  },
+  {
+    "name": "Tipografi",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Başlık Fontu"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "default": "assistant_n4",
+        "label": "Başlık Fontu",
+        "info": "Başlıklar için kullanılacak font"
+      },
+      {
+        "type": "header",
+        "content": "Gövde Fontu"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "default": "assistant_n4",
+        "label": "Gövde Fontu",
+        "info": "Normal metin için kullanılacak font"
+      },
+      {
+        "type": "range",
+        "id": "body_scale",
+        "label": "Gövde Font Boyutu",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "default": 100,
+        "unit": "%"
+      }
+    ]
+  },
+  {
+    "name": "Renkler",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Ana Renkler"
+      },
+      {
+        "type": "color",
+        "id": "colors_primary",
+        "label": "Ana Renk",
+        "default": "#2563EB"
+      },
+      {
+        "type": "color",
+        "id": "colors_secondary",
+        "label": "İkincil Renk",
+        "default": "#F59E0B"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent",
+        "label": "Vurgu Rengi",
+        "default": "#10B981"
+      },
+      {
+        "type": "header",
+        "content": "Arkaplan Renkleri"
+      },
+      {
+        "type": "color",
+        "id": "colors_background_1",
+        "label": "Ana Arkaplan",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "colors_background_2",
+        "label": "İkincil Arkaplan",
+        "default": "#F9FAFB"
+      },
+      {
+        "type": "header",
+        "content": "Metin Renkleri"
+      },
+      {
+        "type": "color",
+        "id": "colors_text",
+        "label": "Ana Metin Rengi",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_light",
+        "label": "Açık Metin Rengi",
+        "default": "#6B7280"
+      }
+    ]
+  },
+  {
+    "name": "Ürün Ayarları",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Ürün Kartları"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Marka Adını Göster",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rating",
+        "label": "Ürün Puanını Göster",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quick_view",
+        "label": "Hızlı Görüntüleme Butonunu Göster",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_wishlist",
+        "label": "Favori Butonunu Göster",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Ürün Sayfası"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_image_zoom",
+        "label": "Görsel Yakınlaştırmayı Etkinleştir",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share_buttons",
+        "label": "Paylaşım Butonlarını Göster",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "product_image_size",
+        "label": "Ürün Görsel Boyutu",
+        "options": [
+          {
+            "value": "small",
+            "label": "Küçük"
+          },
+          {
+            "value": "medium",
+            "label": "Orta"
+          },
+          {
+            "value": "large",
+            "label": "Büyük"
+          }
+        ],
+        "default": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Kargo Ayarları",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Ücretsiz Kargo"
+      },
+      {
+        "type": "checkbox",
+        "id": "free_shipping_enabled",
+        "label": "Ücretsiz Kargo Etkinleştir",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Ücretsiz Kargo Minimum Tutarı",
+        "default": 150
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_message",
+        "label": "Ücretsiz Kargo Mesajı",
+        "default": "150₺ ve üzeri alışverişlerde ücretsiz kargo!"
+      },
+      {
+        "type": "header",
+        "content": "Kargo Ücretleri"
+      },
+      {
+        "type": "number",
+        "id": "standard_shipping_cost",
+        "label": "Standart Kargo Ücreti",
+        "default": 29
+      },
+      {
+        "type": "number",
+        "id": "express_shipping_cost",
+        "label": "Hızlı Kargo Ücreti",
+        "default": 49
+      }
+    ]
+  },
+  {
+    "name": "Performans",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Görsel Optimizasyonu"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_lazy_loading",
+        "label": "Lazy Loading Etkinleştir",
+        "default": true,
+        "info": "Görsellerin sayfa yüklenirken gecikmeli yüklenmesini sağlar"
+      },
+      {
+        "type": "select",
+        "id": "image_quality",
+        "label": "Görsel Kalitesi",
+        "options": [
+          {
+            "value": "70",
+            "label": "Düşük (Hızlı yüklenme)"
+          },
+          {
+            "value": "85",
+            "label": "Orta (Önerilen)"
+          },
+          {
+            "value": "95",
+            "label": "Yüksek (Yavaş yüklenme)"
+          }
+        ],
+        "default": "85"
+      },
+      {
+        "type": "header",
+        "content": "Önbellekleme"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_browser_cache",
+        "label": "Tarayıcı Önbelleği Etkinleştir",
+        "default": true
+      }
+    ]
+  }
+]

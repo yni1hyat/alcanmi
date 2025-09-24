@@ -1,0 +1,505 @@
+{% comment %}
+  Product card snippet for displaying individual products
+{% endcomment %}
+
+<div class="product-card" data-product-id="{{ product.id }}">
+  <!-- Discount Badge -->
+  {% if product.compare_at_price > product.price %}
+    {% assign discount_percentage = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+    <div class="product-card__badge">
+      %{{ discount_percentage }} İndirim
+    </div>
+  {% endif %}
+
+  <!-- Action Buttons -->
+  <div class="product-card__actions">
+    <button class="product-card__action product-card__wishlist" 
+            data-product-id="{{ product.id }}"
+            aria-label="Favorilere ekle">
+      {% render 'icon-heart' %}
+    </button>
+    <button class="product-card__action product-card__quick-view" 
+            data-product-id="{{ product.id }}"
+            aria-label="Hızlı görüntüle">
+      {% render 'icon-eye' %}
+    </button>
+  </div>
+
+  <!-- Product Image -->
+  <div class="product-card__image">
+    <a href="{{ product.url }}" class="product-card__image-link">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | image_url: width: 400 }}" 
+             alt="{{ product.featured_image.alt | escape }}"
+             class="product-card__image-img"
+             width="400"
+             height="400"
+             loading="lazy">
+      {% else %}
+        <div class="product-card__image-placeholder">
+          {% render 'icon-placeholder' %}
+        </div>
+      {% endif %}
+    </a>
+
+    <!-- Image Navigation Dots -->
+    {% if product.images.size > 1 %}
+      <div class="product-card__image-nav">
+        {% for image in product.images limit: 3 %}
+          <button class="product-card__image-dot {% if forloop.first %}active{% endif %}" 
+                  data-image-url="{{ image | image_url: width: 400 }}">
+          </button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Product Info -->
+  <div class="product-card__info">
+    <!-- Category -->
+    {% if product.type != blank %}
+      <div class="product-card__category">{{ product.type }}</div>
+    {% endif %}
+
+    <!-- Title -->
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}" class="product-card__title-link">{{ product.title }}</a>
+    </h3>
+
+    <!-- Rating & Reviews -->
+    <div class="product-card__rating">
+      <div class="product-card__stars">
+        {% comment %} Simulated rating - you can integrate with a review app {% endcomment %}
+        {% assign rating = 4.5 %}
+        {% for i in (1..5) %}
+          {% if i <= rating %}
+            {% render 'icon-star-filled' %}
+          {% else %}
+            {% render 'icon-star' %}
+          {% endif %}
+        {% endfor %}
+        <span class="product-card__rating-value">{{ rating }}</span>
+      </div>
+      <span class="product-card__review-count">({{ product.metafields.reviews.count | default: 156 }} yorum)</span>
+    </div>
+
+    <!-- Price -->
+    <div class="product-card__price">
+      <span class="product-card__price-current">
+        {{ product.price | money }}
+      </span>
+      {% if product.compare_at_price > product.price %}
+        <span class="product-card__price-compare">
+          {{ product.compare_at_price | money }}
+        </span>
+      {% endif %}
+    </div>
+
+    <!-- Shipping Info -->
+    <div class="product-card__shipping">
+      {% render 'icon-truck' %}
+      {% if product.metafields.shipping.free_shipping == true %}
+        <span class="product-card__shipping-text product-card__shipping-text--free">Ücretsiz Kargo</span>
+      {% else %}
+        <span class="product-card__shipping-text">Kargo: {{ product.metafields.shipping.cost | default: '39₺' }}</span>
+      {% endif %}
+    </div>
+
+    <!-- Stock Status -->
+    <div class="product-card__stock">
+      {% if product.available %}
+        <span class="product-card__stock-status product-card__stock-status--available">
+          {{ product.selected_or_first_available_variant.inventory_quantity | default: 24 }} adet stokta
+        </span>
+      {% else %}
+        <span class="product-card__stock-status product-card__stock-status--unavailable">
+          Tükendi
+        </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Add to Cart Button -->
+  <div class="product-card__cart">
+    {% if product.available %}
+      <button class="product-card__cart-button" 
+              data-product-id="{{ product.id }}"
+              data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+        {% render 'icon-cart' %}
+        Sepete Ekle
+      </button>
+    {% else %}
+      <button class="product-card__cart-button product-card__cart-button--disabled" disabled>
+        Tükendi
+      </button>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .product-card {
+    position: relative;
+    background: rgb(var(--color-base-background-1));
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(var(--color-base-text), 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .product-card:hover {
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .product-card__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 10;
+    background: rgb(var(--color-error));
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .product-card__actions {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .product-card__actions {
+    opacity: 1;
+  }
+
+  .product-card__action {
+    padding: 0.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border: none;
+    color: rgba(var(--color-base-text), 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .product-card__action:hover {
+    background: rgb(var(--color-primary));
+    color: white;
+    transform: scale(1.1);
+  }
+
+  .product-card__action svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .product-card__image {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: rgba(var(--color-base-text), 0.05);
+  }
+
+  .product-card__image-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-card__image-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .product-card:hover .product-card__image-img {
+    transform: scale(1.05);
+  }
+
+  .product-card__image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(var(--color-base-text), 0.3);
+  }
+
+  .product-card__image-placeholder svg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .product-card__image-nav {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .product-card__image-nav {
+    opacity: 1;
+  }
+
+  .product-card__image-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .product-card__image-dot.active,
+  .product-card__image-dot:hover {
+    background: white;
+  }
+
+  .product-card__info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .product-card__category {
+    font-size: 0.75rem;
+    color: rgb(var(--color-primary));
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .product-card__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .product-card__title-link {
+    color: rgb(var(--color-base-text));
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .product-card__title-link:hover {
+    color: rgb(var(--color-primary));
+  }
+
+  .product-card__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .product-card__stars {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .product-card__stars svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: rgb(var(--color-secondary));
+  }
+
+  .product-card__rating-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(var(--color-base-text));
+    margin-left: 0.25rem;
+  }
+
+  .product-card__review-count {
+    font-size: 0.75rem;
+    color: rgba(var(--color-base-text), 0.5);
+  }
+
+  .product-card__price {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .product-card__price-current {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: rgb(var(--color-base-text));
+  }
+
+  .product-card__price-compare {
+    font-size: 0.875rem;
+    color: rgba(var(--color-base-text), 0.5);
+    text-decoration: line-through;
+  }
+
+  .product-card__shipping {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  .product-card__shipping svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .product-card__shipping-text--free {
+    color: rgb(var(--color-success));
+  }
+
+  .product-card__shipping-text--free + svg {
+    color: rgb(var(--color-success));
+  }
+
+  .product-card__shipping-text {
+    color: rgba(var(--color-base-text), 0.6);
+  }
+
+  .product-card__stock {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .product-card__stock-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+  }
+
+  .product-card__stock-status--available {
+    background: rgba(var(--color-success), 0.1);
+    color: rgb(var(--color-success));
+  }
+
+  .product-card__stock-status--unavailable {
+    background: rgba(var(--color-error), 0.1);
+    color: rgb(var(--color-error));
+  }
+
+  .product-card__cart {
+    padding: 0 1rem 1rem;
+  }
+
+  .product-card__cart-button {
+    width: 100%;
+    background: rgb(var(--color-primary));
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .product-card__cart-button:hover {
+    background: rgb(var(--color-primary-light));
+    transform: translateY(-1px);
+  }
+
+  .product-card__cart-button--disabled {
+    background: rgba(var(--color-base-text), 0.3);
+    cursor: not-allowed;
+  }
+
+  .product-card__cart-button--disabled:hover {
+    background: rgba(var(--color-base-text), 0.3);
+    transform: none;
+  }
+
+  .product-card__cart-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Image navigation
+    document.querySelectorAll('.product-card__image-dot').forEach(dot => {
+      dot.addEventListener('click', function() {
+        const imageUrl = this.dataset.imageUrl;
+        const productCard = this.closest('.product-card');
+        const img = productCard.querySelector('.product-card__image-img');
+        
+        if (img && imageUrl) {
+          img.src = imageUrl;
+        }
+
+        // Update active dot
+        productCard.querySelectorAll('.product-card__image-dot').forEach(d => d.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Wishlist functionality
+    document.querySelectorAll('.product-card__wishlist').forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        this.classList.toggle('active');
+        
+        // Here you would typically make an AJAX call to add/remove from wishlist
+        console.log('Toggle wishlist for product:', productId);
+      });
+    });
+
+    // Quick view functionality
+    document.querySelectorAll('.product-card__quick-view').forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        
+        // Here you would typically open a modal with product details
+        console.log('Quick view for product:', productId);
+      });
+    });
+
+    // Add to cart functionality
+    document.querySelectorAll('.product-card__cart-button').forEach(button => {
+      button.addEventListener('click', function() {
+        if (this.disabled) return;
+        
+        const productId = this.dataset.productId;
+        const variantId = this.dataset.variantId;
+        
+        // Here you would typically make an AJAX call to add to cart
+        console.log('Add to cart:', { productId, variantId });
+        
+        // Show loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = 'Ekleniyor...';
+        this.disabled = true;
+        
+        // Simulate API call
+        setTimeout(() => {
+          this.innerHTML = originalText;
+          this.disabled = false;
+        }, 1000);
+      });
+    });
+  });
+</script>

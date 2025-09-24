@@ -1,0 +1,539 @@
+{% comment %}
+  Product grid section for displaying products
+{% endcomment %}
+
+<section class="product-grid-section">
+  <div class="product-grid-section__wrapper">
+    <!-- Search and Filter Bar -->
+    <div class="product-grid-section__search">
+      <form action="{{ routes.search_url }}" method="get" class="search-form">
+        <div class="search-form__input-wrapper">
+          {% render 'icon-search' %}
+          <input type="search" 
+                 name="q" 
+                 value="{{ search.terms | escape }}"
+                 placeholder="Ürün ara... (örn: akıllı, su şişesi, kablosuz)"
+                 class="search-form__input"
+                 autocomplete="off">
+        </div>
+        <button type="button" class="search-form__filter-toggle" id="filter-toggle">
+          {% render 'icon-filter' %}
+          <span class="search-form__filter-text">Filtreler</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="product-grid-section__content">
+      <!-- Filter Sidebar -->
+      <div class="product-grid-section__filters" id="filter-sidebar">
+        <div class="filters">
+          <div class="filters__header">
+            <h3 class="filters__title">Filtreler</h3>
+            <button class="filters__close" id="filter-close">
+              {% render 'icon-close' %}
+            </button>
+          </div>
+
+          <!-- Categories -->
+          <div class="filters__group">
+            <h4 class="filters__group-title">Kategori</h4>
+            <div class="filters__options">
+              <a href="{{ routes.all_products_collection_url }}" 
+                 class="filters__option {% unless collection %}filters__option--active{% endunless %}">
+                Tüm Kategoriler
+              </a>
+              {% for collection in collections %}
+                {% unless collection.handle == 'frontpage' %}
+                  <a href="{{ collection.url }}" 
+                     class="filters__option {% if collection.handle == collection.handle %}filters__option--active{% endif %}">
+                    {{ collection.title }}
+                  </a>
+                {% endunless %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="filters__group">
+            <h4 class="filters__group-title">Fiyat Aralığı</h4>
+            <div class="filters__price-range">
+              <input type="number" placeholder="Min" class="filters__price-input" id="price-min">
+              <input type="number" placeholder="Max" class="filters__price-input" id="price-max">
+            </div>
+          </div>
+
+          <!-- Rating Filter -->
+          <div class="filters__group">
+            <h4 class="filters__group-title">Minimum Puan</h4>
+            <div class="filters__options">
+              {% for i in (1..5) %}
+                <button class="filters__rating-option" data-rating="{{ i }}">
+                  <div class="filters__rating-stars">
+                    {% for j in (1..5) %}
+                      {% if j <= i %}
+                        {% render 'icon-star-filled' %}
+                      {% else %}
+                        {% render 'icon-star' %}
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <span>{{ i }}+ yıldız</span>
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Free Shipping -->
+          <div class="filters__group">
+            <label class="filters__checkbox">
+              <input type="checkbox" class="filters__checkbox-input">
+              <span class="filters__checkbox-label">Sadece Ücretsiz Kargo</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="product-grid-section__products">
+        <div class="product-grid-section__header">
+          <h2 class="product-grid-section__title">
+            {% if search.terms %}
+              "{{ search.terms }}" için sonuçlar
+            {% elsif collection %}
+              {{ collection.title }}
+            {% else %}
+              Tüm Ürünler
+            {% endif %}
+          </h2>
+          <div class="product-grid-section__count">
+            {% if search.results %}
+              {{ search.results.size }} ürün bulundu
+            {% elsif collection %}
+              {{ collection.products.size }} ürün bulundu
+            {% else %}
+              {{ collections.all.products.size }} ürün bulundu
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+          {% if search.results.size > 0 %}
+            {% for product in search.results %}
+              {% render 'product-card', product: product %}
+            {% endfor %}
+          {% elsif collection %}
+            {% for product in collection.products %}
+              {% render 'product-card', product: product %}
+            {% endfor %}
+          {% else %}
+            {% for product in collections.all.products limit: 12 %}
+              {% render 'product-card', product: product %}
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        {% if search.results.size == 0 and search.terms %}
+          <div class="product-grid-section__empty">
+            <div class="empty-state">
+              <div class="empty-state__icon">🔍</div>
+              <h3 class="empty-state__title">Aradığınız kriterlere uygun ürün bulunamadı</h3>
+              <p class="empty-state__description">Farklı arama terimleri veya filtreler deneyebilirsiniz</p>
+              <a href="{{ routes.all_products_collection_url }}" class="empty-state__button">
+                Tüm Ürünleri Görüntüle
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .product-grid-section {
+    background: rgb(var(--color-base-background-2));
+    padding: 2rem 0;
+  }
+
+  .product-grid-section__wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .product-grid-section__search {
+    background: rgb(var(--color-base-background-1));
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(var(--color-base-text), 0.1);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-form {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .search-form__input-wrapper {
+    flex: 1;
+    position: relative;
+  }
+
+  .search-form__input-wrapper svg {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    color: rgba(var(--color-base-text), 0.4);
+  }
+
+  .search-form__input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border: 1px solid rgba(var(--color-base-text), 0.2);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .search-form__input:focus {
+    border-color: rgb(var(--color-primary));
+    box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
+  }
+
+  .search-form__filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(var(--color-base-text), 0.05);
+    color: rgba(var(--color-base-text), 0.7);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .search-form__filter-toggle:hover {
+    background: rgba(var(--color-base-text), 0.1);
+  }
+
+  .search-form__filter-text {
+    display: none;
+  }
+
+  .product-grid-section__content {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .product-grid-section__filters {
+    display: none;
+    width: 20rem;
+    flex-shrink: 0;
+  }
+
+  .product-grid-section__filters.active {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    background: rgb(var(--color-base-background-1));
+    box-shadow: -4px 0 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    overflow-y: auto;
+  }
+
+  .filters {
+    padding: 1.5rem;
+    height: 100%;
+  }
+
+  .filters__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .filters__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: rgb(var(--color-base-text));
+    margin: 0;
+  }
+
+  .filters__close {
+    display: block;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: rgba(var(--color-base-text), 0.4);
+    cursor: pointer;
+  }
+
+  .filters__group {
+    margin-bottom: 1.5rem;
+  }
+
+  .filters__group-title {
+    font-weight: 500;
+    color: rgb(var(--color-base-text));
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+  }
+
+  .filters__options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filters__option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    color: rgba(var(--color-base-text), 0.7);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .filters__option:hover,
+  .filters__option--active {
+    background: rgba(var(--color-primary), 0.1);
+    color: rgb(var(--color-primary));
+  }
+
+  .filters__price-range {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .filters__price-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid rgba(var(--color-base-text), 0.2);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+  }
+
+  .filters__price-input:focus {
+    border-color: rgb(var(--color-primary));
+    box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
+  }
+
+  .filters__rating-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    color: rgba(var(--color-base-text), 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filters__rating-option:hover {
+    background: rgba(var(--color-primary), 0.1);
+    color: rgb(var(--color-primary));
+  }
+
+  .filters__rating-stars {
+    display: flex;
+    gap: 0.125rem;
+  }
+
+  .filters__rating-stars svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .filters__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .filters__checkbox-input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: rgb(var(--color-primary));
+  }
+
+  .product-grid-section__products {
+    flex: 1;
+  }
+
+  .product-grid-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .product-grid-section__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: rgb(var(--color-base-text));
+    margin: 0;
+  }
+
+  .product-grid-section__count {
+    color: rgba(var(--color-base-text), 0.6);
+    font-size: 0.875rem;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+  }
+
+  .empty-state__icon {
+    font-size: 3.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgb(var(--color-base-text));
+    margin: 0 0 0.5rem 0;
+  }
+
+  .empty-state__description {
+    color: rgba(var(--color-base-text), 0.6);
+    margin: 0 0 1rem 0;
+  }
+
+  .empty-state__button {
+    display: inline-block;
+    background: rgb(var(--color-primary));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+
+  .empty-state__button:hover {
+    background: rgb(var(--color-primary-light));
+  }
+
+  @media (min-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-form__filter-text {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .product-grid-section__filters {
+      display: block;
+      position: static;
+      height: auto;
+      background: rgb(var(--color-base-background-1));
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(var(--color-base-text), 0.1);
+    }
+
+    .filters__close {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .product-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterToggle = document.getElementById('filter-toggle');
+    const filterSidebar = document.getElementById('filter-sidebar');
+    const filterClose = document.getElementById('filter-close');
+
+    if (filterToggle && filterSidebar) {
+      filterToggle.addEventListener('click', function() {
+        filterSidebar.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    if (filterClose && filterSidebar) {
+      filterClose.addEventListener('click', function() {
+        filterSidebar.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    }
+
+    // Close filter on backdrop click
+    if (filterSidebar) {
+      filterSidebar.addEventListener('click', function(e) {
+        if (e.target === filterSidebar) {
+          filterSidebar.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Başlık",
+      "default": "Tüm Ürünler"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Sayfa başına ürün sayısı",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid"
+    }
+  ]
+}
+{% endschema %}

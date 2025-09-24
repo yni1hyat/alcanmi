@@ -1,0 +1,319 @@
+{% comment %}
+  Hero banner section for homepage
+{% endcomment %}
+
+<section class="hero-banner">
+  <div class="hero-banner__wrapper">
+    <div class="hero-banner__content">
+      <!-- Content -->
+      <div class="hero-banner__text">
+        <div class="hero-banner__heading-wrapper">
+          <h1 class="hero-banner__heading">
+            {{ section.settings.heading | default: 'Hayatı Kolaylaştıran Akıllı Çözümler' }}
+          </h1>
+          <p class="hero-banner__subheading">
+            {{ section.settings.subheading | default: 'Günlük yaşamınızı daha verimli, pratik ve keyifli hale getirecek yenilikçi ürünleri keşfedin.' }}
+          </p>
+        </div>
+
+        <div class="hero-banner__buttons">
+          <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" 
+             class="hero-banner__button hero-banner__button--primary">
+            {{ section.settings.button_text | default: 'Ürünleri Keşfet' }}
+            {% render 'icon-arrow-right' %}
+          </a>
+          <a href="{{ section.settings.secondary_button_link | default: '#categories' }}" 
+             class="hero-banner__button hero-banner__button--secondary">
+            {{ section.settings.secondary_button_text | default: 'Kategoriler' }}
+          </a>
+        </div>
+
+        <!-- Features -->
+        <div class="hero-banner__features">
+          <div class="hero-banner__feature">
+            {% render 'icon-truck' %}
+            <div class="hero-banner__feature-content">
+              <div class="hero-banner__feature-title">Hızlı Kargo</div>
+              <div class="hero-banner__feature-subtitle">24 saat içinde</div>
+            </div>
+          </div>
+          <div class="hero-banner__feature">
+            {% render 'icon-shield' %}
+            <div class="hero-banner__feature-content">
+              <div class="hero-banner__feature-title">2 Yıl Garanti</div>
+              <div class="hero-banner__feature-subtitle">Güvenli alışveriş</div>
+            </div>
+          </div>
+          <div class="hero-banner__feature">
+            {% render 'icon-zap' %}
+            <div class="hero-banner__feature-content">
+              <div class="hero-banner__feature-title">Yenilikçi</div>
+              <div class="hero-banner__feature-subtitle">Son teknoloji</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image -->
+      <div class="hero-banner__image">
+        <div class="hero-banner__image-wrapper">
+          {% if section.settings.image != blank %}
+            <img src="{{ section.settings.image | image_url: width: 800 }}" 
+                 alt="{{ section.settings.image.alt | escape }}"
+                 class="hero-banner__image-img"
+                 width="800"
+                 height="600">
+          {% else %}
+            <img src="https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                 alt="Akıllı Ürünler"
+                 class="hero-banner__image-img"
+                 width="800"
+                 height="600">
+          {% endif %}
+        </div>
+        {% if section.settings.show_discount_badge %}
+          <div class="hero-banner__discount-badge">
+            <div class="hero-banner__discount-percentage">{{ section.settings.discount_percentage | default: '50' }}%</div>
+            <div class="hero-banner__discount-text">İndirim</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-banner {
+    background: linear-gradient(to right, rgb(var(--color-primary)), rgb(37, 99, 235));
+    color: white;
+    overflow: hidden;
+  }
+
+  .hero-banner__wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+  }
+
+  .hero-banner__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero-banner__heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0 0 1rem 0;
+  }
+
+  .hero-banner__subheading {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 2rem 0;
+  }
+
+  .hero-banner__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .hero-banner__button--primary {
+    background: white;
+    color: rgb(var(--color-primary));
+  }
+
+  .hero-banner__button--primary:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+  }
+
+  .hero-banner__button--secondary {
+    border: 1px solid white;
+    color: white;
+    background: transparent;
+  }
+
+  .hero-banner__button--secondary:hover {
+    background: white;
+    color: rgb(var(--color-primary));
+  }
+
+  .hero-banner__features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .hero-banner__feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-banner__feature svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .hero-banner__feature-title {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .hero-banner__feature-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .hero-banner__image {
+    position: relative;
+  }
+
+  .hero-banner__image-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .hero-banner__image-img {
+    width: 100%;
+    height: 16rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+
+  .hero-banner__discount-badge {
+    position: absolute;
+    bottom: -1rem;
+    right: -1rem;
+    background: rgb(var(--color-secondary));
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .hero-banner__discount-percentage {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .hero-banner__discount-text {
+    font-size: 0.875rem;
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner__wrapper {
+      padding: 6rem 1rem;
+    }
+
+    .hero-banner__content {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .hero-banner__heading {
+      font-size: 3.75rem;
+    }
+
+    .hero-banner__buttons {
+      flex-direction: row;
+    }
+
+    .hero-banner__features {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero-banner__image-img {
+      height: 20rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Başlık",
+      "default": "Hayatı Kolaylaştıran Akıllı Çözümler"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Alt Başlık",
+      "default": "Günlük yaşamınızı daha verimli, pratik ve keyifli hale getirecek yenilikçi ürünleri keşfedin."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Ana Buton Metni",
+      "default": "Ürünleri Keşfet"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Ana Buton Linki"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "İkinci Buton Metni",
+      "default": "Kategoriler"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "İkinci Buton Linki"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero Görseli"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_badge",
+      "label": "İndirim Rozeti Göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "discount_percentage",
+      "label": "İndirim Yüzdesi",
+      "default": "50"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}
